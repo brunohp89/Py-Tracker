@@ -1,7 +1,10 @@
 ## Py-Tracker
 A tracker for cryptocurrencies
 
-Py-tracker is a python-based tracker for cryptocurrencies where you are in control of all keys and connections to your accounts. Moreover it gives the possibility to plot single token balance or single account balance and have pretty candle-graphs to track balance. I still have a lot of improvement to do but would be very glad to collaborate and make it better!
+Py-tracker is a python-based tracker for cryptocurrencies where you are in control of all keys and connections to your accounts. Moreover it gives the possibility to plot single token balance or single account balance and have pretty candle-graphs to track balance. I still have a lot of improvement to do but would be very glad to collaborate and make it better! For now you will need to run the file main.py yourself to use Py-Tracker and install the necessary packages, you can just copy and paste the following line in your terminal: 
+                 pip install python-binance requests forex-python pydrive pandas==1.3.1 numpy pycoinbase currencyconverter coinbase mplfinance
+
+I am working on making Py-Tracker a standalone application.
 
 *Instructions for first use:* You will need to put in the file system/scantokens.csv your own API token for Ethscan (if you are going to track any ethereum wallet) --> https://etherscan.io/apis and/or your own API for BSCScan (for BSC wallets) --> https://docs.bscscan.com/getting-started/viewing-api-usage-statisticsb
 
