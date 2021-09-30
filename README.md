@@ -11,6 +11,8 @@ When you run Py-tracker for the first time you will be prompted to add your acco
             
 *Google Drive backup:* with Py-Tracker you can create a backup of your files with your google drive account. This way it is possible to use Py-tracker in different devices and keep you data always updated. However, for maximum security you will have to create your own Google Drive API keys, you can find the instruction in this link: https://pythonhosted.org/PyDrive/quickstart.html#authentication put the file client-secrets.json inside the main folder of Py-Tracker (not inside system folder). There is no need to do this if you do not intend to use google drive.
 
+*Ignore file:* Due to the fact that nowadays scammers started doing scam tokens airdrops and dust attacks you can ignore these tokens when using Py-Tracker. You can do that by inserting the name of the tokens and the account name where they are in the ignore file (either directly modifying the ignore.csv file or via interface).
+
 ## *ATTENTION* I will *NEVER* ask for your private keys or recovery sentence of non-custodial wallets. In case of exchange accounts *ONLY* use read-only APIs to use Py-Tracker. Be safe, the crypto world is teeming with scammers.
 
 
