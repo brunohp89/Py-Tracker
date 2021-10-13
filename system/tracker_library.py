@@ -21,7 +21,7 @@ from currency_converter import CurrencyConverter
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', filename='executionlog.log')
 
 # ------------------------------------------------------------ #
-version = "Version 2021-09-30"
+version = "Version 2021-10-13"
 # ------------------------------------------------------------ #
 
 # ------------------------------------------------------------ #
@@ -46,6 +46,7 @@ def get_setup():
             loaded_setup = json.load(ol)
         return loaded_setup
 
+
 # Load Setup
 setup = get_setup()
 
@@ -66,12 +67,14 @@ def str_to_datetime(date: str):
     except ValueError:
         print("Invalid format. Allowed formats are: YYYY-MM-DD and YYYY-MM-DD HH:MM:SS")
 
+
 def create_new_balance_dict():
     new_dict = dict({'byAccount': dict(), 'total': {'open': pd.DataFrame(), 'close': pd.DataFrame(),
-                                                                'high': pd.DataFrame(), 'low': pd.DataFrame(),
-                                                                'totalbalance': pd.DataFrame(),
-                                                                'pltotale': pd.DataFrame()}})
+                                                    'high': pd.DataFrame(), 'low': pd.DataFrame(),
+                                                    'totalbalance': pd.DataFrame(),
+                                                    'pltotale': pd.DataFrame()}})
     return new_dict
+
 
 def get_currency_rate(currency='USD'):
     try:
@@ -526,7 +529,7 @@ def get_coinbase_balance(token, secret, locname) -> pd.DataFrame:
 
 def get_token_prices(tokens: pd.DataFrame, fromdate=0, todate=0, currency='usd'):
     if fromdate == 0:
-        timeframe = 7
+        timeframe = 10
     else:
         timeframe = dt.datetime.fromtimestamp(todate) - dt.datetime.fromtimestamp(fromdate)
         timeframe = int(timeframe.days)
@@ -609,7 +612,7 @@ def get_binance_prices(bintokenslist: list, binancetoken: str, binancesecret: st
     date_to_column = 0
 
     if fromdate == 0:
-        timeframe = "7 days ago"
+        timeframe = "10 days ago"
     else:
         date_to_column = todate - 9000
         timeframe = dt.datetime.fromtimestamp(todate) - dt.datetime.fromtimestamp(fromdate)
@@ -654,7 +657,6 @@ def get_binance_prices(bintokenslist: list, binancetoken: str, binancesecret: st
 
 
 def get_coinbase_prices(balance: pd.DataFrame, fromdate=0, todate=0, currency='usd') -> dict:
-
     conversion_rate = get_currency_rate(currency.upper())
 
     possible_granularities = (60, 300, 900, 3600, 21600, 86400)
@@ -665,7 +667,7 @@ def get_coinbase_prices(balance: pd.DataFrame, fromdate=0, todate=0, currency='u
         granularity = granularity[0]
 
     if fromdate == 0:
-        fromdate = (dt.datetime.now() - dt.timedelta(days=7)).strftime('%Y-%m-%dT00:00:00')
+        fromdate = (dt.datetime.now() - dt.timedelta(days=10)).strftime('%Y-%m-%dT00:00:00')
     else:
         fromdate = dt.datetime.fromtimestamp(fromdate).strftime('%Y-%m-%dT00:00:00')
 
@@ -705,7 +707,6 @@ def get_coinbase_prices(balance: pd.DataFrame, fromdate=0, todate=0, currency='u
 
 
 def get_cryptodotcom_prices(balancedf: pd.DataFrame, todate, currency='usd') -> dict:
-
     conversion_rate = get_currency_rate(currency.upper())
 
     prices = []
@@ -779,7 +780,8 @@ def get_balances(setuplist: list, currency='usd', history_dict=None):
                 history_dict['byAccount'][location]['price'] = vout_price
             else:
                 for key in list(history_dict['byAccount'][location]['price']):
-                    tempkey = pd.concat([history_dict['byAccount'][location]['price'][key], vout_price.get(key)], axis=0)
+                    tempkey = pd.concat([history_dict['byAccount'][location]['price'][key], vout_price.get(key)],
+                                        axis=0)
                     history_dict['byAccount'][location]['price'][key] = tempkey[~tempkey.index.duplicated(keep='first')]
 
             vout = pd.DataFrame(

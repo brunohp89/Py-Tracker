@@ -22,7 +22,7 @@ import logging
 # TODO: general -> give more meaningful names to labels and buttons
 # TODO: general -> remove some redundant attributes in some classes
 
-version = "Version 2021-09-30"
+version = "Version 2021-10-13"
 
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', filename='executionlog.log',
                     level=logging.NOTSET)
@@ -33,11 +33,17 @@ background = 'black'
 main_window = tk.Tk()
 main_window.configure(bg=background)
 canvas_height = 110
+main_window.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
+main_window.title("PyTracker")
 
 
 # ------------------------------------------------------------ #
 #                   For first use                              #
 # ------------------------------------------------------------ #
+
+def restart_window(window_to_detroy):
+    window_to_detroy.destroy()
+
 
 def restart():
     main_window.destroy()
@@ -61,6 +67,7 @@ if len(tl.setup) == 0:
 
         def add(self):
             window3 = tk.Toplevel(bg=background)
+            window3.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
             self.var1 = tk.IntVar()
             self.var2 = tk.IntVar()
             self.name = tk.Entry(window3, text="Name")
@@ -96,17 +103,32 @@ if len(tl.setup) == 0:
         def update_setup(self):
             if self.name.get() == '':
                 windownok = tk.Toplevel(bg=background)
+                windownok.iconbitmap(tl.wdir.replace('system', 'images') + "\\NOK.ico")
+                windownok.title("ERROR")
+
                 labnok = tk.Label(windownok, text="Name is a mandatory field", bg=background, fg=foreground)
-                labnok.grid(row=1, column=1)
+                labnok.grid(row=0, column=0)
+
+                okbutton = tk.Button(windownok, text="OK", command=lambda: restart_window(windownok))
+                okbutton.grid(row=1, column=0)
+
             else:
                 tl.setup.append(dict({'name': self.name.get(), 'isCustodial': bool(self.var1.get()),
                                       'network': self.network.get(), "delegate": self.var2.get(), 'credentials': {
                         'token': self.token.get(), 'secret': self.secret.get()
                     }, 'PublicAddress': self.public_address.get()}))
-                windowok = tk.Toplevel()
+                windowok = tk.Toplevel(bg=background)
+                windowok.iconbitmap(tl.wdir.replace('system', 'images') + "\\OK.ico")
+
+                button1ok = tk.Button(windowok, text="Add more", command=lambda: restart_window(windowok))
+                button1ok.grid(row=1, column=0)
+                button2ok = tk.Button(windowok, text="Restart program", command=restart)
+                button2ok.grid(row=1, column=1)
+
                 labok = tk.Label(windowok, text=self.name.get() + " succesfully added to setup file",
                                  bg=background, fg=foreground)
-                labok.grid(row=1, column=1)
+                labok.grid(row=0, column=0, columnspan=2)
+
             self.public_address.delete(0, tk.END)
             self.name.delete(0, tk.END)
             self.network.delete(0, tk.END)
@@ -203,6 +225,11 @@ else:
                     round(round(pl1, 2) -
                           float(total_invested), 2)) + " " + sysinfo.get('currency').upper() + " Total: " + str(
                     round(pl1, 2)) + " " + sysinfo.get('currency').upper()
+            else:
+                mess3 = "PL(%): NA" + " PL: " + str(
+                    round(round(pl1, 2) -
+                          float(total_invested), 2)) + " " + sysinfo.get('currency').upper() + " Total: " + str(
+                    round(pl1, 2)) + " " + sysinfo.get('currency').upper()
         else:
             floaded = tl.create_new_balance_dict()
             with open(tl.wdir.replace("system", "") + 'chronology.pickle', 'wb') as handle1:
@@ -231,7 +258,7 @@ else:
             self.message = ''
 
             self.label2 = tk.Label(root, text=self.message, bg=background, fg=foreground)
-            self.label2.grid(row=8, column=23, columnspan=11)
+            self.label2.grid(row=8, column=25, columnspan=11)
 
             self.message3 = mess3
             self.label3 = tk.Label(root, text=self.message3, bg=background, fg=foreground)
@@ -398,12 +425,16 @@ else:
             self.location = tk.StringVar(value="Select location")
             self.locationlist = [p['name'] for p in tl.setup]
             self.ignorecsv = pd.read_csv(tl.wdir + "\\ignore.csv")
-            self.toremove = [f'{a}, {b}' for a, b in
-                             zip(self.ignorecsv['Token'].tolist(), self.ignorecsv['Location'].tolist())]
+            if self.ignorecsv.shape[0] == 0:
+                self.toremove = ["Nothing to ignore"]
+            else:
+                self.toremove = [f'{a}, {b}' for a, b in
+                                 zip(self.ignorecsv['Token'].tolist(), self.ignorecsv['Location'].tolist())]
             self.toremoveval = tk.StringVar(value="Select entry to remove")
 
         def new_window(self):
             window22 = tk.Toplevel(bg=background)
+            window22.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
             lab = tk.Label(window22, text="Update setup files", bg=background, fg=foreground)
             accountinfo = tk.Button(window22, text="Update accounts information", command=self.update_accounts)
             ignore = tk.Button(window22, text="Update tokens to ignore", command=self.update_ignore)
@@ -416,6 +447,7 @@ else:
 
         def update_ignore(self):
             ignorewindow = tk.Toplevel(bg=background)
+            ignorewindow.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
 
             label1 = tk.Label(ignorewindow, text="Insert token and location to ignore:", bg=background, fg=foreground)
             label1.grid(columnspan=6, column=1, row=1)
@@ -446,7 +478,7 @@ else:
             self.toremoveoptions.grid(columnspan=3, column=1, row=8)
 
             buttonmod = tk.Button(ignorewindow, text='Add', command=self.add_to_csv)
-            buttonmod.grid(column=3, row=4)
+            buttonmod.grid(column=2, row=4, columnspan=2)
 
             buttonmod2 = tk.Button(ignorewindow, text='Remove', command=self.remove_from_csv)
             buttonmod2.grid(column=2, row=9)
@@ -484,34 +516,39 @@ else:
             glab.pack()
 
         def update_accounts(self):
-            window2 = tk.Toplevel()
+            window2 = tk.Toplevel(bg=background)
+            window2.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
+
             self.add = tk.Button(window2, text="Add element", command=self.add)
             self.remove = tk.Button(window2, text="Remove element", command=self.remove)
-            self.add.grid(row=1, column=1)
-            self.remove.grid(row=1, column=2)
+            self.add.grid(row=1, column=0)
+            self.remove.grid(row=1, column=1)
             self.label_tot = tk.Label(window2,
-                                      text="Accounts included in setup.json: " + ", ".join(
+                                      text="Accounts -> " + ", ".join(
                                           [i.get('name') for i in tl.setup]))
-            self.label_tot.grid(row=2, column=1)
+            self.label_tot.grid(row=2, column=0, columnspan=2)
 
         def add(self):
-            window3 = tk.Toplevel()
+            window3 = tk.Toplevel(bg=background)
+            window3.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
             self.var1 = tk.IntVar()
             self.var2 = tk.IntVar()
             self.name = tk.Entry(window3, text="Name")
-            labelname = tk.Label(window3, text="Account Name")
+            labelname = tk.Label(window3, text="Account Name", bg=background, fg=foreground)
             self.network = tk.Entry(window3, text="Network")
-            labelnetwork = tk.Label(window3, text="Network")
+            labelnetwork = tk.Label(window3, text="Network", bg=background, fg=foreground)
             self.token = tk.Entry(window3, text="Token")
-            labeltoken = tk.Label(window3, text="Token")
+            labeltoken = tk.Label(window3, text="Token", bg=background, fg=foreground)
             self.secret = tk.Entry(window3, text="Secret")
-            labelsecret = tk.Label(window3, text="Secret")
+            labelsecret = tk.Label(window3, text="Secret", bg=background, fg=foreground)
             self.public_address = tk.Entry(window3, text="Public Address")
-            labelpublic = tk.Label(window3, text="Public Address")
+            labelpublic = tk.Label(window3, text="Public Address", bg=background, fg=foreground)
             self.button21 = tk.Button(window3, text="Add", command=self.update_setup)
             self.button21.grid(row=8, column=1)
-            self.custodial = tk.Checkbutton(window3, text='Custodial', variable=self.var1, onvalue=1, offvalue=0)
-            self.delegate = tk.Checkbutton(window3, text='Delegate', variable=self.var2, onvalue=1, offvalue=0)
+            self.custodial = tk.Checkbutton(window3, text='Custodial', variable=self.var1, onvalue=1, offvalue=0,
+                                            bg=background, fg=foreground)
+            self.delegate = tk.Checkbutton(window3, text='Delegate', variable=self.var2, onvalue=1, offvalue=0,
+                                           bg=background, fg=foreground)
             self.custodial.grid(row=2, column=1)
             self.network.grid(row=3, column=1)
             self.delegate.grid(row=4, column=1)
@@ -528,17 +565,32 @@ else:
 
         def update_setup(self):
             if self.name.get() == '':
-                windownok = tk.Toplevel()
-                labnok = tk.Label(windownok, text="Name is a mandatory field")
-                labnok.grid(row=1, column=1)
+                windownok = tk.Toplevel(bg=background)
+                windownok.iconbitmap(tl.wdir.replace('system', 'images') + "\\NOK.ico")
+                windownok.title("ERROR")
+
+                labnok = tk.Label(windownok, text="Name is a mandatory field", bg=background, fg=foreground)
+                labnok.grid(row=0, column=0)
+
+                okbutton = tk.Button(windownok, text="OK", command=lambda: restart_window(windownok))
+                okbutton.grid(row=1, column=0)
+
             else:
                 tl.setup.append(dict({'name': self.name.get(), 'isCustodial': bool(self.var1.get()),
                                       'network': self.network.get(), "delegate": self.var2.get(), 'credentials': {
                         'token': self.token.get(), 'secret': self.secret.get()
                     }, 'PublicAddress': self.public_address.get()}))
-                windowok = tk.Toplevel()
-                labok = tk.Label(windowok, text=self.name.get() + " succesfully added to setup file")
-                labok.grid(row=1, column=1)
+                windowok = tk.Toplevel(bg=background)
+                windowok.iconbitmap(tl.wdir.replace('system', 'images') + "\\OK.ico")
+
+                button1ok = tk.Button(windowok, text="Add more", command=lambda: restart_window(windowok))
+                button1ok.grid(row=1, column=0)
+                button2ok = tk.Button(windowok, text="Restart program", command=restart)
+                button2ok.grid(row=1, column=1)
+
+                labok = tk.Label(windowok, text=self.name.get() + " succesfully added to setup file",
+                                 bg=background, fg=foreground)
+                labok.grid(row=0, column=0, columnspan=2)
             self.public_address.delete(0, tk.END)
             self.name.delete(0, tk.END)
             self.network.delete(0, tk.END)
@@ -553,6 +605,7 @@ else:
 
         def remove(self):
             self.window4 = tk.Toplevel()
+            self.window4.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
             self.removename = tk.StringVar(self.window4, value="Select account to remove")
             self.listtemp = [t.get('name') for t in tl.setup]
             self.removedropdown = tk.OptionMenu(self.window4, self.removename,
@@ -567,15 +620,18 @@ else:
             removed = [tl.setup[x] for x, y in enumerate(temp) if y == self.removename.get()]
             if self.removename.get() == "Select account to remove":
                 winderror = tk.Toplevel()
+                winderror.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
                 labok = tk.Label(winderror, text="Please make a selection")
                 labok.grid(row=1, column=1)
             else:
                 if len(removed) > 0:
                     windowok = tk.Toplevel()
+                    windowok.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
                     labok = tk.Label(windowok, text=self.removename.get() + " succesfully removed from setup file")
                     labok.grid(row=1, column=1)
                 else:
                     windownok = tk.Toplevel()
+                    windownok.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
                     labnok = tk.Label(windownok, text=self.removename.get() + " could not be found in the setup file")
                     labnok.grid(row=1, column=1)
                 self.removename = tk.StringVar(self.window4, value="Select account to remove")
@@ -593,6 +649,8 @@ else:
         @staticmethod
         def update_staking():
             windowsta = tk.Toplevel()
+            windowsta.iconbitmap(tl.wdir.replace('system', 'images') + "\\logo.ico")
+
             lab = tk.Label(windowsta, text="COMING SOON! PLease for now modify the file binancestaking.csv manually")
             lab.pack()
 
@@ -713,7 +771,7 @@ else:
             self.button = tk.Button(self.root, text="Plot", command=self.plot_values, state=self.availability)
             self.button.grid(row=21, column=0, columnspan=8)
 
-            self.buttonup = tk.Button(self.root, text="Update data", command=self.update_widget)
+            self.buttonup = tk.Button(self.root, text="Update data", command=restart)
             self.buttonup.grid(row=14, column=51, columnspan=5, rowspan=2)
 
             self.buttonup = tk.Button(self.root, text="Reset selections", command=self.reset)
